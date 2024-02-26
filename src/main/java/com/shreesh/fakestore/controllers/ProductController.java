@@ -37,9 +37,7 @@ public class ProductController {
     @PostMapping
     public Product addNewProduct(Product product)
     {
-        Product p = new Product();
-        p.setTitle("hello There");
-        return p;
+        return productService.addNewProduct(product);
     }
 
     @PatchMapping("/{id}")

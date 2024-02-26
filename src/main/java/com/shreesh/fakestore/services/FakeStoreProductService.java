@@ -43,4 +43,14 @@ public class FakeStoreProductService implements ProductService{
         );
         return convertFaketooriginal(productDto);
     }
+
+    @Override
+    public Product addNewProduct(Product product) {
+        Product p = restTemplate.postForObject(
+                "https://fakestoreapi.com/products",
+                product,
+                Product.class
+        );
+        return product;
+    }
 }
