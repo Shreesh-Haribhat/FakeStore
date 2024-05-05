@@ -1,13 +1,13 @@
 package com.shreesh.fakestore.controllers;
 
-import com.shreesh.fakestore.dtos.FakeStoreProductDto;
+
 import com.shreesh.fakestore.models.Product;
-import com.shreesh.fakestore.services.FakeStoreProductService;
+
 import com.shreesh.fakestore.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 @RestController
@@ -25,7 +25,7 @@ public class ProductController {
     @GetMapping
     public List<Product> getAllProducts()
     {
-        return new ArrayList<>();
+        return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
@@ -40,16 +40,16 @@ public class ProductController {
         return productService.addNewProduct(product);
     }
 
-    @PatchMapping("/{id}")
-    public Product updateProduct(@PathVariable("id") Long id,@RequestBody Product product)
-    {
-        return new Product();
-    }
-
     @PutMapping("/{id}")
     public Product replaceProduct(@PathVariable("id") Long id,@RequestBody Product product)
     {
-        return new Product();
+        return productService.updateProduct(id,product);
+    }
+
+    @PatchMapping("/{id}")
+    public Product updateProduct(@PathVariable("id") Long id,@RequestBody Product product)
+    {
+        return productService.replaceProduct(id,product);
     }
 
     @DeleteMapping("/{id}")
