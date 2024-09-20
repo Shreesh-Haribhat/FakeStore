@@ -3,10 +3,9 @@ package com.shreesh.fakestore.models;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 public class Category {
     private Long id;
     private String name;
-
 }
