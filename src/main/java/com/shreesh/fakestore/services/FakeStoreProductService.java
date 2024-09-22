@@ -1,11 +1,20 @@
 package com.shreesh.fakestore.services;
 
 import com.shreesh.fakestore.dtos.FakeStoreProductDto;
+import com.shreesh.fakestore.dtos.ProductRequestDto;
 import com.shreesh.fakestore.models.Category;
 import com.shreesh.fakestore.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpMessageConverterExtractor;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 public class FakeStoreProductService implements ProductService{
@@ -40,5 +49,42 @@ public class FakeStoreProductService implements ProductService{
                 FakeStoreProductDto.class
         );
         return convertFakeStoreProductToProduct(productDto);
+    }
+
+    @Override
+    public List<Product> getAllProduct(){
+        //https://fakestoreapi.com/products
+        FakeStoreProductDto[] list = restTemplate.getForObject("https://fakestoreapi.com/products",
+                FakeStoreProductDto[].class);
+        List<Product> productList = new ArrayList<>();
+        for(int i=0;i<list.length;i++)
+        {
+            productList.add(convertFakeStoreProductToProduct(list[i]));
+        }
+
+        return productList;
+    }
+
+    @Override
+    public Product addProduct(FakeStoreProductDto fakeStoreProductDto) {
+
+        FakeStoreProductDto dto = restTemplate.postForObject("https://fakestoreapi.com/products",fakeStoreProductDto,FakeStoreProductDto.class);
+
+        return convertFakeStoreProductToProduct(dto);
+    }
+
+    @Override
+    public Product updateProduct(Long id, FakeStoreProductDto fakeStoreProductDto) {
+
+
+        RequestCallback requestCallback = restTemplate.httpEntityCallback(fakeStoreProductDto,FakeStoreProductDto.class);
+        HttpMessageConverterExtractor<FakeStoreProductDto> responseExtractor =
+                new HttpMessageConverterExtractor<>(FakeStoreProductDto.class, restTemplate.getMessageConverters());
+         FakeStoreProductDto dto = restTemplate.execute(
+                "https://fakestoreapi.com/products/"+id,
+                HttpMethod.PUT, requestCallback, responseExtractor);
+
+         return convertFakeStoreProductToProduct(dto);
+
     }
 }

@@ -1,5 +1,6 @@
 package com.shreesh.fakestore.Controllers;
 
+import com.shreesh.fakestore.dtos.FakeStoreProductDto;
 import com.shreesh.fakestore.models.Category;
 import com.shreesh.fakestore.models.Product;
 import com.shreesh.fakestore.services.ProductService;
@@ -25,7 +26,7 @@ public class ProductController {
     @GetMapping()
     public List<Product> getAllProducts()
     {
-        return new ArrayList<>();
+        return productService.getAllProduct();
     }
 
     @GetMapping("/{id}")
@@ -33,28 +34,24 @@ public class ProductController {
     {
         return productService.getSingleProduct(id);
     }
-    @PostMapping()
-    public Product addProduct(@RequestBody Product product)
-    {
-        Product p = new Product();
-        p.setId(232L);
-        p.setTitle("Shreesh");
-        p.setCategory(new Category());
-        p.setImageUrl("ggfg");
-        return p;
-    }
 
-    @PatchMapping("/{id}")
-    public Product updateProduct(@PathVariable("id") Long id, @RequestBody Product product)
+    @PostMapping()
+    public Product addProduct(@RequestBody FakeStoreProductDto fakeStoreProductDto)
     {
-        return new Product();
+        return productService.addProduct(fakeStoreProductDto);
     }
 
     @PutMapping("/{id}")
-    public Product replaceProduct(@PathVariable("id") Long id, @RequestBody Product product)
+    public Product updateProduct(@PathVariable("id") Long id, @RequestBody FakeStoreProductDto fakeStoreProductDto)
     {
-        return new Product();
+        return productService.updateProduct(id,fakeStoreProductDto);
     }
+
+//    @PutMapping("/{id}")
+//    public Product replaceProduct(@PathVariable("id") Long id, @RequestBody Product product)
+//    {
+//        return new Product();
+//    }
 
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable("id") Long id)
