@@ -1,13 +1,17 @@
 package com.shreesh.fakestore.Controllers;
 
+import com.shreesh.fakestore.Exception.InvalidProductIdException;
+import com.shreesh.fakestore.dtos.ErrorResponseDTO;
 import com.shreesh.fakestore.dtos.FakeStoreProductDto;
-import com.shreesh.fakestore.models.Category;
+import com.shreesh.fakestore.dtos.ProductWrapper;
 import com.shreesh.fakestore.models.Product;
 import com.shreesh.fakestore.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,11 +33,20 @@ public class ProductController {
         return productService.getAllProduct();
     }
 
-    @GetMapping("/{id}")
-    public Product getProduct(@PathVariable("id") Long id)
-    {
-        return productService.getSingleProduct(id);
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ProductWrapper> getProduct(@PathVariable("id") Long id) throws InvalidProductIdException {
+
+        ResponseEntity<ProductWrapper> response;
+
+            Product product = productService.getSingleProduct(id);
+            ProductWrapper productResponse = new ProductWrapper(product, "Got Single Product");
+
+            response = new ResponseEntity<>(productResponse, HttpStatus.OK);
+
+            return response;
+
     }
+
 
     @PostMapping()
     public Product addProduct(@RequestBody FakeStoreProductDto fakeStoreProductDto)

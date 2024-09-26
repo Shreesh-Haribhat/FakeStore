@@ -1,11 +1,10 @@
 package com.shreesh.fakestore.services;
 
+import com.shreesh.fakestore.Exception.InvalidProductIdException;
 import com.shreesh.fakestore.dtos.FakeStoreProductDto;
-import com.shreesh.fakestore.dtos.ProductRequestDto;
 import com.shreesh.fakestore.models.Category;
 import com.shreesh.fakestore.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpMessageConverterExtractor;
@@ -42,8 +41,12 @@ public class FakeStoreProductService implements ProductService{
     }
 
     @Override
-    public Product getSingleProduct(Long id) {
+    public Product getSingleProduct(Long id) throws InvalidProductIdException {
         //https://fakestoreapi.com/products/
+        if(id > 20)
+        {
+            throw new InvalidProductIdException();
+        }
         FakeStoreProductDto productDto = restTemplate.getForObject(
                 "https://fakestoreapi.com/products/" + id,
                 FakeStoreProductDto.class
