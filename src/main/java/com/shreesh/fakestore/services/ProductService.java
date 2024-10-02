@@ -9,9 +9,13 @@ import java.util.List;
 public interface ProductService {
     Product getSingleProduct(Long id) throws InvalidProductIdException;
 
-    List<Product> getAllProduct();
+    List<Product> getAllProduct() throws InvalidProductIdException;
 
-    Product addProduct(FakeStoreProductDto fakeStoreProductDto);
+    Product addProduct(Product product) throws InvalidProductIdException;
 
-    Product updateProduct(Long id, FakeStoreProductDto fakeStoreProductDto);
+    Product updateProduct(Long id, Product product) throws InvalidProductIdException;
+
+    void deleteProduct(Long id);
+
+
 }

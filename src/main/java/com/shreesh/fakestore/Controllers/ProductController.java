@@ -4,9 +4,11 @@ import com.shreesh.fakestore.Exception.InvalidProductIdException;
 import com.shreesh.fakestore.dtos.ErrorResponseDTO;
 import com.shreesh.fakestore.dtos.FakeStoreProductDto;
 import com.shreesh.fakestore.dtos.ProductWrapper;
+import com.shreesh.fakestore.models.Category;
 import com.shreesh.fakestore.models.Product;
 import com.shreesh.fakestore.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,43 +23,65 @@ public class ProductController {
     private ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService)
+    public ProductController(@Qualifier("selfProductService") ProductService productService)
     {
         this.productService = productService;
     }
 
 
     @GetMapping()
-    public List<Product> getAllProducts()
-    {
+    public List<Product> getAllProducts() throws InvalidProductIdException {
         return productService.getAllProduct();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductWrapper> getProduct(@PathVariable("id") Long id) throws InvalidProductIdException {
-
+    public ResponseEntity<ProductWrapper> getProduct(@PathVariable("id") Long id) throws InvalidProductIdException
+    {
         ResponseEntity<ProductWrapper> response;
 
-            Product product = productService.getSingleProduct(id);
-            ProductWrapper productResponse = new ProductWrapper(product, "Got Single Product");
+        Product product = productService.getSingleProduct(id);
+        ProductWrapper productResponse = new ProductWrapper(product, "Got Single Product");
 
-            response = new ResponseEntity<>(productResponse, HttpStatus.OK);
+        response = new ResponseEntity<>(productResponse, HttpStatus.OK);
 
-            return response;
+        return response;
 
     }
 
 
     @PostMapping()
-    public Product addProduct(@RequestBody FakeStoreProductDto fakeStoreProductDto)
-    {
-        return productService.addProduct(fakeStoreProductDto);
+    public Product addProduct(@RequestBody FakeStoreProductDto fakeStoreProductDto) throws InvalidProductIdException {
+        Product product = new Product();
+        product.setImageUrl(fakeStoreProductDto.getImage());
+        product.setId(fakeStoreProductDto.getId());
+        product.setPrice(fakeStoreProductDto.getPrice());
+        product.setTitle(fakeStoreProductDto.getTitle());
+        product.setDescription(fakeStoreProductDto.getDescription());
+
+        // Create or find the category
+        Category category = new Category();
+        category.setName(fakeStoreProductDto.getCategory()); // Set the category name
+        product.setCategory(category); // Associate the category with the product
+
+        Product savedProduct = productService.addProduct(product);
+        return savedProduct;
     }
 
+
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable("id") Long id, @RequestBody FakeStoreProductDto fakeStoreProductDto)
-    {
-        return productService.updateProduct(id,fakeStoreProductDto);
+    public Product updateProduct(@PathVariable("id") Long id, @RequestBody FakeStoreProductDto fakeStoreProductDto) throws InvalidProductIdException {
+        Product product = new Product();
+        product.setId(fakeStoreProductDto.getId());
+        product.setPrice(fakeStoreProductDto.getPrice());
+        product.setTitle(fakeStoreProductDto.getTitle());
+        product.setImageUrl(fakeStoreProductDto.getImage());
+        product.setDescription(fakeStoreProductDto.getDescription());
+
+        Category newCat = new Category();
+        newCat.setName(fakeStoreProductDto.getCategory());
+        product.setCategory(newCat);
+
+        return productService.updateProduct(id,product);
     }
 
 //    @PutMapping("/{id}")
@@ -69,7 +93,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable("id") Long id)
     {
-        return;
+        productService.deleteProduct(id);
     }
 
 

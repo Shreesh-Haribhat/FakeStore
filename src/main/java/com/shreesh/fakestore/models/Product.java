@@ -1,5 +1,6 @@
 package com.shreesh.fakestore.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -16,7 +17,7 @@ public class Product extends BaseModel{
     private String imageUrl;
     private String description;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     private Category category;
 
 }
