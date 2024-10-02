@@ -17,6 +17,7 @@ public class Product extends BaseModel{
     private String imageUrl;
     private String description;
 
+
     @ManyToOne(cascade = {CascadeType.PERSIST})
     private Category category;
 
