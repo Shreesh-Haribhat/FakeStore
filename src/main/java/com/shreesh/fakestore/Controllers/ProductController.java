@@ -4,6 +4,7 @@ import com.shreesh.fakestore.Exception.InvalidProductIdException;
 import com.shreesh.fakestore.dtos.ErrorResponseDTO;
 import com.shreesh.fakestore.dtos.FakeStoreProductDto;
 import com.shreesh.fakestore.dtos.ProductWrapper;
+import com.shreesh.fakestore.dtos.UserDto;
 import com.shreesh.fakestore.models.Category;
 import com.shreesh.fakestore.models.Product;
 import com.shreesh.fakestore.services.ProductService;
@@ -13,8 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -22,15 +25,28 @@ public class ProductController {
 
     private ProductService productService;
 
+    private RestTemplate restTemplate;
+
     @Autowired
-    public ProductController(@Qualifier("selfProductService") ProductService productService)
+    public ProductController(@Qualifier("selfProductService") ProductService productService,RestTemplate restTemplate)
     {
         this.productService = productService;
+        this.restTemplate = restTemplate;
     }
 
 
     @GetMapping()
     public List<Product> getAllProducts() throws InvalidProductIdException {
+
+//        UserDto userDto = restTemplate.getForObject("http://localhost:8082/validateToken/" + token,
+//                UserDto.class);
+//
+//
+//        if (userDto == null) {
+//            throw new RuntimeException("Invalid");
+//        }
+
+
         return productService.getAllProduct();
     }
 
